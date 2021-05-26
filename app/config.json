@@ -1,0 +1,6 @@
+{
+    "tokenizer": "mrm8488/bert-medium-finetuned-squadv2",
+    "model_path": "qa.opt.quant.onnx",
+    "provider": "CPUExecutionProvider"
+    
+}

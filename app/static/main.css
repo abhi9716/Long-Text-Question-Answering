@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Saira+Semi+Condensed&display=swap');
+
+
+.para{
+    background-color: #9df5a0;
+    color: rgb(236, 87, 87);
+    /* padding: 140px 20px; */
+    margin: 20px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.answer{
+    background-color: #9df5a0;
+    color: rgb(236, 87, 87);
+    /* padding: 140px 20px; */
+    margin: 20px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#text{
+/* width: 50%;
+height: 50%; */
+/* background-color: #9df5a0; */
+color: rgb(0, 0, 0);
+/* padding: 14px 20px; */
+/* margin: 8px 0; */
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+#question{
+    /* width: 50%;
+    height: 50%; */
+    /* background-color: #9df5a0; */
+    color: rgb(0, 0, 0);
+    /* padding: 14px 20px; */
+    /* margin: 8px 0; */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    }

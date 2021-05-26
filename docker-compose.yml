@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  
+  qa-api:
+    build: .      # path is relative to docker-compose.yml localtion in host
+    volumes:
+      - .:/myapp # mount point
+    ports:
+      - "8080:80" # host:container
+    networks:
+      - elastic
+    depends_on:
+      - es01
+    # command: "curl http://es01:9200"
+
+  es01:
+    
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
+    container_name: es01
+    restart: "always"
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - network.bind_host= 0.0.0.0
+      - network.host= 0.0.0.0
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+
+volumes:
+  data01:
+    driver: local                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+networks:
+  elastic:
+    # driver: bridge

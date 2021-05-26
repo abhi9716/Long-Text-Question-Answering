@@ -1,0 +1,6 @@
+onnxruntime
+transformers
+elasticsearch[async]
+jinja2
+aiofiles
+python-multipart

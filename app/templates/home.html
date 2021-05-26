@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QA App</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!-- <link rel="stylesheet" href="../static/main.css" > -->
+<link rel="stylesheet" href={{ url_for('static', path='/main.css') }} >
+
+</head>
+<body>
+
+<h1 style="text-align:center">Long-Text Question Answering</h1>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-6 col-md-12">
+
+      <form action="/submittext" method="post">
+          <div class="form-group" id="text">
+            <label >Document</label>
+            <textarea rows="20" name="text" class="form-control" id="inputText"  placeholder="Enter text" onkeyup="manage1(this)"></textarea>
+          </div>
+      
+          <button type="submit" id="btSubmit1" class="btn btn-primary" disabled>Submit</button>
+        </form>
+        </div>
+
+    <div class="col-lg-6 col-md-12">
+      <div class="row-fluid">
+
+          <form >
+          <div class="form-group" id="question">
+            <label >Ask question related to Document Submitted.</label>
+            <textarea rows="2" class="form-control" id="inputQuestion"  placeholder="Enter question" onkeyup="manage2(this)"></textarea>
+          </div>
+          <button type="submit" id="btSubmit2" class="btn btn-primary" disabled>Submit</button>
+        </form>
+      </div>
+
+      <div class="row-fluid">
+        <div class="para">
+          <p>{{result }}</p>
+        </div>
+        <div class="answer" id="ans">
+          <!-- <p>{{url_for('static', path='/main.css') }}</p> -->
+        </div>
+
+        </div>  
+  </div>
+</div>
+
+<script>
+  function testVariable() {
+      var strText = document.getElementById("inputText").value;          
+      // var strText1 = document.getElementById("textTWO").value;
+      // var result = strText + ' ' + strText1;
+      document.getElementById('ans').textContent = result;
+       
+  }
+</script>
+
+<script>
+  function manage1(inputText) {
+      var bt = document.getElementById('btSubmit1');
+      if (inputText.value != '') {
+          bt.disabled = false;
+      }
+      else {
+          bt.disabled = true;
+      }
+  }
+</script>
+
+<script>
+  function manage2(inputQuestion) {
+      var bt = document.getElementById('btSubmit2');
+      if (inputQuestion.value != '') {
+          bt.disabled = false;
+      }
+      else {
+          bt.disabled = true;
+      }
+  }
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>
