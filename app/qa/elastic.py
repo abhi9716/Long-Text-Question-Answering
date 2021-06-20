@@ -1,4 +1,4 @@
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, AsyncElasticsearch
 from elasticsearch import helpers
 import re
 
@@ -17,12 +17,16 @@ class Elastic:
         # self.ports = ports
         
     def connect_elasticsearch(self, ports):    
-        self.es = Elasticsearch(ports)
+        self.es = AsyncElasticsearch(hosts=ports)
         if self.es.ping():
             print('ElasticSearch  Connected ')
         else:
             print('Awww it could not connect!')
         return self.es
+
+    def delete_index(self, index):
+        self.es.indices.delete(index=index, ignore=[400, 404])
+        print("index: {} has been deleted.".format(index))
 
     def create_index(self, index):
         #   Creates an index in Elasticsearch if one isn't already there.
@@ -40,18 +44,18 @@ class Elastic:
         }
         }
   
-        if index not in self.es.indices.get_alias().keys():
-            self.es.indices.create(
-                index=index,
-                body=body,
-                ignore=400,
-            )
-            print("new index: {} created.".format(index))
+        # if index not in self.es.indices.get_alias().keys():
+        self.es.indices.create(
+            index=index,
+            body=body,
+            ignore=400,
+        )
+        print("new index: {} created.".format(index))
 
-        else:
-            print("{} already exist.".format(index))
+        # else:
+        #     print("{} already exist.".format(index))
 
-    def bulk_list_data(self, list_of_strings, index):
+    async def bulk_list_data(self, list_of_strings, index):
         # use a `yield` generator so that the data
         # isn't loaded into memory
         for i, doc in enumerate(list_of_strings):
@@ -64,10 +68,10 @@ class Elastic:
                     "_source": {"text": doc}
                 }    
 
-    def bulk_post(self, list_of_strings, index):
+    async def bulk_post(self, list_of_strings, index):
         try:
             # make the bulk call, and get a response
-            response = helpers.bulk(self.es, self.bulk_list_data(list_of_strings, index))
+            response = await helpers.async_bulk(self.es, self.bulk_list_data(list_of_strings, index))
 
             #response = helpers.bulk(elastic, actions, index='employees', doc_type='people')
             print ("\nRESPONSE:", response)

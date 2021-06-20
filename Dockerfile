@@ -13,7 +13,8 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install -r /myapp/requirements.txt
 RUN pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
-
+# RUN apt-get update && apt-get install -y \
+# curl
 # expose the port that uvicorn will run the app 
 # EXPOSE 8000
 
