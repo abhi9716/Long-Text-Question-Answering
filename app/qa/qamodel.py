@@ -14,7 +14,6 @@ pd = str(Path(__file__).absolute().parents[1]) # root/.../../app
 with open(pd+"/config.json") as json_file:
     config = json.load(json_file)
 
-
 class Model:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained(config["tokenizer"])

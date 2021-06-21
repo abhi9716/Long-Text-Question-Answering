@@ -24,11 +24,12 @@ class Elastic:
             print('Awww it could not connect!')
         return self.es
 
-    def delete_index(self, index):
-        self.es.indices.delete(index=index, ignore=[400, 404])
+    async def delete_index(self, index):
+        await self.es.indices.delete(index=index, ignore=[400, 404])
         print("index: {} has been deleted.".format(index))
+        
 
-    def create_index(self, index):
+    async def create_index(self, index):
         #   Creates an index in Elasticsearch if one isn't already there.
 
         body = {
@@ -45,15 +46,16 @@ class Elastic:
         }
   
         # if index not in self.es.indices.get_alias().keys():
-        self.es.indices.create(
-            index=index,
-            body=body,
-            ignore=400,
-        )
-        print("new index: {} created.".format(index))
+        if not (await self.es.indices.exists(index=index)):
+            await self.es.indices.create(
+                index=index,
+                body=body,
+                ignore=400,
+            )
+            print("new index: {} created.".format(index))
 
-        # else:
-        #     print("{} already exist.".format(index))
+        else:
+            print("{} already exist.".format(index))
 
     async def bulk_list_data(self, list_of_strings, index):
         # use a `yield` generator so that the data
@@ -78,8 +80,31 @@ class Elastic:
         except Exception as e:
             print("\nERROR:", e)
 
+    
+    async def find_relevant_doc(self, index, question):
+        search_param = {
+                'query': {
+                    'match': {
+                        'text': question
+                    }
+                }
+            }
+
+        response = await self.es.search(index=index, body=search_param, size=1)
+
+        return response
+
     def splitTextonWords(self, Text, numberOfWords=1):
-        if (numberOfWords > 1):
+
+        if len(Text.split())==0:
+            x=[]
+
+        elif len(Text.split())<numberOfWords :
+            t = str.maketrans("\n\t\r", "   ")
+            text = Text.translate(t)
+            x=[text]
+
+        elif (numberOfWords > 1):
             t = str.maketrans("\n\t\r", "   ")
             text = Text.translate(t)
             sentlist = text.split(". ")
@@ -99,8 +124,10 @@ class Elastic:
             t = str.maketrans("\n\t\r", "   ")
             text = Text.translate(t)
             x = text.split()
+
         else: 
-            x = None
+            x = []
+        print(x)
         return x
         
 

@@ -5,8 +5,6 @@
 <title>QA App</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <!-- <link rel="stylesheet" href="../static/main.css" > -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link rel="stylesheet" href={{ url_for('static', path='/main.css') }} >
 </head>
 
@@ -18,13 +16,14 @@
   <div class="row">
     <div class="col-lg-6 col-md-12">
 
-      <!-- <form> -->
+      <form>
           <div class="form-group" id="text">
             <label >Document</label>
             <textarea rows="20" name="text" class="form-control" id="inputText"  placeholder="Enter text" onkeyup="manage1(this)"></textarea>
           </div>
-          <button type="submit" id="btSubmit1" class="btn btn-primary" onclick="performOCR()" disabled>Submit</button>
-        <!-- </form> -->
+          <button type="button" id="btSubmit1" class="btn btn-primary" onclick="submittext()" disabled>Submit</button>
+        </form>
+        
         </div>
 
     <div class="col-lg-6 col-md-12">
@@ -35,7 +34,7 @@
             <label >Ask question related to Document Submitted.</label>
             <textarea rows="2" class="form-control" id="inputQuestion"  placeholder="Enter question" onkeyup="manage2(this)"></textarea>
           </div>
-          <button type="submit" id="btSubmit2" class="btn btn-primary" disabled>Submit</button>
+          <button type="button" id="btSubmit2" class="btn btn-primary" onclick="submitquestion()" disabled>Submit</button>
         </form>
       </div>
 
@@ -51,10 +50,12 @@
   </div>
 </div>
 
+
 <script>
-  function performOCR() {
+  function submittext() {
     var myObj = {  lastname : "Doe" };
-    
+    var bt = document.getElementById('btSubmit2');
+    bt.disabled = true;
     var text = $('#inputText').val()
     // console.log(files);
   $.ajax({
@@ -63,26 +64,39 @@
             contentType: "application/json",
             data: JSON.stringify({"text": text}),
             success: function(response) {
-            document.getElementById('ans').textContent = response;
+              // bt.disabled = false;
+
         // console.log(response);
       },
         }).done(function(data) {
-          document.getElementById('ans').textContent = data;
+          
             console.log(data);
         });
   }
 
- 
 </script>
 
 <script>
-  function testVariable() {
-      var strText = document.getElementById("inputText").value;          
-      // var strText1 = document.getElementById("textTWO").value;
-      // var result = strText + ' ' + strText1;
-      document.getElementById('ans').textContent = result;
-       
+  function submitquestion() {
+    var myObj = {  lastname : "Doe" };
+    
+    var text = $('#inputQuestion').val()
+    // console.log(files);
+  $.ajax({
+            url: "/submitque",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({"text": text}),
+            success: function(response) {
+            document.getElementById('ans').textContent = response;
+        // console.log(response);
+      },
+        }).done(function(data) {
+          // document.getElementById('ans').textContent = data;
+            console.log(data);
+        });
   }
+
 </script>
 
 <script>
