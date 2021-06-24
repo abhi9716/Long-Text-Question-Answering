@@ -7,7 +7,7 @@
 3) Apply QA model on retrieved document.
 
 ## Technologies used:
-FastAPI, HuggingFace, Docker
+FastAPI, HuggingFace, Elastic Search, Docker
 
 ## How to run:
 
