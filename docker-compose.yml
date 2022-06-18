@@ -1,14 +1,16 @@
-version: "3.9"
+version: "3.7"
 
 services:
   
-  qa-api:
-    
-    build: .      # path is relative to docker-compose.yml location in host
-    volumes:
-      - .:/myapp # mount point
+  qa-api1:
+    image: triongenz/qa:v2
+    container_name: qaapi
+    restart: always
+    # build: ./docker      # path is relative to docker-compose.yml location in host
     ports:
-      - "8080:80" # host:container
+      - "8000:8000" # host:container
+    volumes:
+      - ./docker/:/code
     networks:
       - elastic
     depends_on:
@@ -16,10 +18,9 @@ services:
     # command: "curl http://es01:9200"
     
   es01:
-    
     image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
     container_name: es01
-    restart: "always"
+    restart: always
     environment:
       - node.name=es01
       - cluster.name=es-docker-cluster
@@ -41,8 +42,8 @@ services:
 
 volumes:
   data01:
-    driver: local                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+    driver: local                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 networks:
   elastic:
-    # driver: bridge
+    driver: bridge

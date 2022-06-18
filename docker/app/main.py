@@ -8,25 +8,26 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
-from elasticsearch import AsyncElasticsearch, Elasticsearch, RequestsHttpConnection, helpers
+import uvicorn
+from elasticsearch import AsyncElasticsearch, Elasticsearch, helpers
 from qa.elastic import Elastic
 import schemas as s
 import time
 import asyncio
 
 cd = str(Path(__file__).absolute().parents[0]) # root/.../../app
-# print(cd)
-time.sleep(50) #let wait for elastic to start its server
+print(cd)
+# time.sleep(50) #let wait for elastic to start its server
 index = "myindex1"
 
 els = Elastic()
 es= els.connect_elasticsearch(ports=[{"host": "es01", "port": 9200}])
 print(els.es)
-# els.create_index(index)
+els.create_index(index)
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory=cd+"/static"), name="static")
-templates = Jinja2Templates(directory=cd+"/templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 @app.on_event("shutdown")
 async def app_shutdown():
@@ -58,7 +59,10 @@ async def read_item(res: s.Response, model: Model = Depends(get_model)):
         rel_doc = doc["hits"]["hits"][0]["_source"]["text"]
         ans = model.predict(ques, rel_doc)
         print(ans)
-        return ans
+        if ans=="[CLS]":
+            return rel_doc
+        else:
+            return ans
     else:
         return "No answer found"
     
@@ -69,4 +73,7 @@ async def read_item(res: s.Response, model: Model = Depends(get_model)):
 #     que, text = a[0], a[1]
 #     ans = model.predict(que, text)
 #     return s.PredictResponse(data=ans)
+
+if __name__ == "__main__":
+    uvicorn.run('main:app', host='0.0.0.0', port=8000, reload=True, root_path="/")
 

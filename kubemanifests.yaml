@@ -1,0 +1,169 @@
+apiVersion: v1
+items:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o kubemanifests.yaml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: es01
+      name: es01
+    spec:
+      ports:
+        - name: "9200"
+          port: 9200
+          targetPort: 9200
+      selector:
+        io.kompose.service: es01
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o kubemanifests.yaml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: qa-api1
+      name: qa-api1
+    spec:
+      ports:
+        - name: "8080"
+          port: 8080
+          targetPort: 80
+      selector:
+        io.kompose.service: qa-api1
+    status:
+      loadBalancer: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o kubemanifests.yaml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: es01
+      name: es01
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: es01
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o kubemanifests.yaml
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.network/elastic: "true"
+            io.kompose.service: es01
+        spec:
+          containers:
+            - env:
+                - name: ES_JAVA_OPTS
+                  value: -Xms256m -Xmx256m
+                - name: bootstrap.memory_lock
+                  value: "true"
+                - name: cluster.name
+                  value: es-docker-cluster
+                - name: discovery.type
+                  value: single-node
+                - name: network.bind_host
+                  value: ' 0.0.0.0'
+                - name: network.host
+                  value: ' 0.0.0.0'
+                - name: node.name
+                  value: es01
+              image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
+              name: es01
+              ports:
+                - containerPort: 9200
+              resources: {}
+              volumeMounts:
+                - mountPath: /usr/share/elasticsearch/data
+                  name: data01
+          restartPolicy: Always
+          volumes:
+            - name: data01
+              persistentVolumeClaim:
+                claimName: data01
+    status: {}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: data01
+      name: data01
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+    status: {}
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      creationTimestamp: null
+      name: elastic
+    spec:
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  io.kompose.network/elastic: "true"
+      podSelector:
+        matchLabels:
+          io.kompose.network/elastic: "true"
+  - apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o kubemanifests.yaml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/elastic: "true"
+        io.kompose.service: qa-api1
+      name: qa-api1
+    spec:
+      containers:
+        - image: triongenz/qa
+          name: qaapi
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /myapp
+              name: qa-api1-claim0
+      restartPolicy: OnFailure
+      volumes:
+        - name: qa-api1-claim0
+          persistentVolumeClaim:
+            claimName: qa-api1-claim0
+    status: {}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: qa-api1-claim0
+      name: qa-api1-claim0
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+    status: {}
+kind: List
+metadata: {}
+
