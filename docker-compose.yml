@@ -8,7 +8,7 @@ services:
     restart: always
     # build: ./docker      # path is relative to docker-compose.yml location in host
     ports:
-      - "8000:8000" # host:container
+      - "80:8000" # host:container
     volumes:
       - ./docker/:/code
     networks:
